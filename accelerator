@@ -1,0 +1,11 @@
+mma.getOrientation();
+/* The return value ranges from 0 to 7
+0: Portrait Up Front
+1: Portrait Up Back
+2: Portrait Down Front
+3: Portrait Down Back
+4: Landscape Right Front
+5: Landscape Right Back
+6: Landscape Left Front
+7: Landscape Left Back
+*/
