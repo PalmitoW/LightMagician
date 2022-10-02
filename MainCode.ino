@@ -20,9 +20,8 @@
 #endif
 CRGB leds[NUM_LEDS];
 
-#define   BUTTON_PIN_PLUS  0    // Bouton du haut : plus
+#define   BUTTON_PIN_SELECT  0    // Bouton du haut : plus
 #define   BUTTON_PIN_START   2    // Bouton du mileu : start
-#define   BUTTON_PIN_MINUS   4    // Bouton du bas : moins
 
 #define   SENSOR_PIN_GESTURE_RIGHT   5    // Capteur de geste droit
 #define   SENSOR_PIN_GESTURE_LEFT   6    // Capteur de geste gauche
@@ -48,9 +47,8 @@ CRGB leds[NUM_LEDS];
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 
 /******************** INTRODUCTION DES VARIABLES ********************/
-bool oldPlus = LOW;
+bool oldSelect = LOW;
 bool oldStart = LOW;
-bool oldMinus = LOW;
 uint8_t showType = 0;
 uint8_t floorType = 0;
 
@@ -59,7 +57,6 @@ void setup() {
 
   pinMode(BUTTON_PIN_SELECT, INPUT_PULLUP);
   pinMode(BUTTON_PIN_START, INPUT_PULLUP);
-  pinMode(BUTTON_PIN_FLOOR, INPUT_PULLUP);
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
   delay(100);
@@ -80,6 +77,114 @@ void setup() {
 void loop() { 
   selectLoop(); // lit l'interrupteur select ; sélectionne un programme ; lance selectshow qui allume les leds témoins
   startLoop();  // lit l'interrupteur start ; lance start show qui execute les effets
-  floorLoop();   // lit l'interrupteur floor ; lance floorshow petits effets floor
+  randomLoop();   // lit l'interrupteur floor ; lance floorshow petits effets floor
 }
 
+/*************************** BUTTON LOOP ***************************/
+void selectLoop(void){ // lit l'interrupteur select ; sélectionne un programme ; lance selectshow qui allume les leds témoins
+    bool newSelect = digitalRead(BUTTON_PIN_SELECT);
+    bool newFloor = digitalRead(BUTTON_PIN_FLOOR);
+   // Check if state changed from low to high (button press).
+  if (newSelect == HIGH && oldSelect == LOW) {
+    // Short delay to debounce button.
+    delay(10);
+    // Check if button is still high after debounce.
+    newSelect = digitalRead(BUTTON_PIN_SELECT);
+    newFloor = digitalRead(BUTTON_PIN_FLOOR);
+    if (newSelect == HIGH) {
+      
+      if (newFloor == LOW)
+      {
+        showType++;
+        
+        if (showType > MAXCASE)
+          showType=0;
+      }
+      else
+      {
+        if(showType <= 0){
+          showType=MAXCASE;
+        }else{
+          showType--;
+        }
+      }
+    }
+  }
+  oldSelect = newSelect;
+  oldFloor = newFloor;
+  selectShow(showType);
+}
+
+void startLoop(void){ // lit l'interrupteur start ; lance start show qui execute les effets
+  bool newStart = digitalRead(BUTTON_PIN_START);
+  // Check if state changed from low to high (button press).
+  if (newStart == HIGH && oldStart == LOW) {
+    // Short delay to debounce button.
+    delay(10);
+    // Check if button is still high after debounce.
+    newStart = digitalRead(BUTTON_PIN_START);
+    if (newStart == HIGH) {
+          startShow(showType);
+    }
+  }
+  oldStart = newStart;
+}
+
+/*************************** BOUCLE EFFETS DE BASE ***************************/
+void startShow(uint8_t i) {
+ 
+ 
+}
+
+void randomLoop(void){ // ramdom programme
+ 
+}
+
+/**************************** FONCTION PARAMETRES **********************/
+
+void showStrip() {
+ #ifdef ADAFRUIT_NEOPIXEL_H 
+   // NeoPixel
+   strip.show();
+ #endif
+ #ifndef ADAFRUIT_NEOPIXEL_H
+   // FastLED
+   FastLED.show();
+ #endif
+}
+
+void setPixel(int Pixel, byte red, byte green, byte blue) {
+ #ifdef ADAFRUIT_NEOPIXEL_H 
+   // NeoPixel
+   strip.setPixelColor(Pixel, strip.Color(red, green, blue));
+ #endif
+ #ifndef ADAFRUIT_NEOPIXEL_H 
+   // FastLED
+   leds[Pixel].r = red;
+   leds[Pixel].g = green;
+   leds[Pixel].b = blue;
+ #endif
+}
+
+void setAll(byte red, byte green, byte blue) {
+  for(int i = 0; i < NUM_LEDS; i++ ) {
+    setPixel(i, red, green, blue); 
+  }
+  showStrip();
+} 
+
+bool startBreak(){
+  bool newStart = digitalRead(BUTTON_PIN_START);
+  bool breakBool = 0;
+  // Check if state changed from low to high (button press).
+  if (newStart == HIGH && oldStart == LOW) {
+    // Short delay to debounce button.
+    delay(10);
+    // Check if button is still high after debounce.
+    newStart = digitalRead(BUTTON_PIN_START);
+    if (newStart == HIGH) {
+          breakBool=1;
+    }
+    return breakBool; 
+  }
+}
