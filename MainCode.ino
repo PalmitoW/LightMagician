@@ -13,20 +13,26 @@
 
 /******************** INTRODUCTION ENTREES SORTIES ********************/
 
+// ANCIENNES LEDS
 #include <Adafruit_NeoPixel.h>
 #ifdef __AVR__
   #include <avr/power.h>
 #endif
+CRGB leds[NUM_LEDS];
 
-#define   BUTTON_PIN_SELECT  0    // Bouton du haut : select
-#define   BUTTON_PIN_START   2    // Bouton du bas : start
-#define   BUTTON_PIN_FLOOR   4    // Bouton pied de baton
+#define   BUTTON_PIN_PLUS  0    // Bouton du haut : plus
+#define   BUTTON_PIN_START   2    // Bouton du mileu : start
+#define   BUTTON_PIN_MINUS   4    // Bouton du bas : moins
+
+#define   SENSOR_PIN_GESTURE_RIGHT   5    // Capteur de geste droit
+#define   SENSOR_PIN_GESTURE_LEFT   6    // Capteur de geste gauche
+#define   SENSOR_PIN_ACCELEROMETER_RIGHT   7    // Capteur de geste droit
+#define   SENSOR_PIN_ACCELEROMETER_LEFT   8    // Capteur de geste gauche
 
 #define   PIXEL_PIN          1    // Digital IO pin connected to the NeoPixels.
 
-#define   NUM_LEDS           42
-// baton d'alexis : led temoin : 17 & 18
-#define   LED_TEMOIN         17
+#define   NUM_LEDS           241
+#define   LED_TEMOIN         1
 
 #define   MAXCASE            8
 
@@ -42,31 +48,32 @@
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 
 /******************** INTRODUCTION DES VARIABLES ********************/
-bool oldSelect = LOW;
+bool oldPlus = LOW;
 bool oldStart = LOW;
-bool oldFloor = LOW;
+bool oldMinus = LOW;
 uint8_t showType = 0;
 uint8_t floorType = 0;
 
 /*************************** BOUCLE SETUP ***************************/
 void setup() { 
+
   pinMode(BUTTON_PIN_SELECT, INPUT_PULLUP);
   pinMode(BUTTON_PIN_START, INPUT_PULLUP);
   pinMode(BUTTON_PIN_FLOOR, INPUT_PULLUP);
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
   delay(100);
+
 }
 
 /************************ BOUCLE EST BOUCLEE ************************/
 /*
 * A FAIRE
 * Objectifs:
-*OK* l’interrupteur SELECT monte le programme
-* l'interrupteur SELECT + FLOOR descend le pogramme OK A TESTER
-* l’interrupteur START lance le programme OK A TESTER
-* une led au dessus de la main indique sur quel programme on est OK
-* l’interrupteur FLOOR lance des petits effets floorShow OK A TESTER
+*OK* Import librairie
+* Définir les fonctions principales
+* Définir la montée et descente des programmes
+* Définir le lancement de programme
 */
 
 
@@ -75,3 +82,4 @@ void loop() {
   startLoop();  // lit l'interrupteur start ; lance start show qui execute les effets
   floorLoop();   // lit l'interrupteur floor ; lance floorshow petits effets floor
 }
+
