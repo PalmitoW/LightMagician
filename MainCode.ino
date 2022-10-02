@@ -1,6 +1,9 @@
 // Costume de GN lumineux
 // #ProjetLightMagician
-// ATtiny85 on-board, 8K of flash, 512 byte of SRAM, 512 bytes of EEPROM
+// Adafruit Metro Mini 328 - 5V 16MHz
+// ATmega328 brains, 32K of flash, 2KB of RAM, clocked at 16MHz
+// Capteur luminosité : TSL2591
+// ?programme utilise 8036 byte ?
  // programme utilise 8036 byte
 /*
 *   
