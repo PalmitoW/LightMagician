@@ -11,14 +11,30 @@
 *   Info: Delay est en milli secondes
 */
 
-/******************** INTRODUCTION ENTREES SORTIES ********************/
-
-// ANCIENNES LEDS
+/******************** INTRODUCTION LEDS ********************/
 #include <Adafruit_NeoPixel.h>
 #ifdef __AVR__
   #include <avr/power.h>
 #endif
 CRGB leds[NUM_LEDS];
+
+/******************** INTRODUCTION ACCELEROMETRE ********************/
+
+// Basic demo for accelerometer readings from Adafruit MPU6050
+
+// ESP32 Guide: https://RandomNerdTutorials.com/esp32-mpu-6050-accelerometer-gyroscope-arduino/
+// ESP8266 Guide: https://RandomNerdTutorials.com/esp8266-nodemcu-mpu-6050-accelerometer-gyroscope-arduino/
+// Arduino Guide: https://RandomNerdTutorials.com/arduino-mpu-6050-accelerometer-gyroscope/
+
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_Sensor.h>
+#include <Wire.h>
+
+Adafruit_MPU6050 mpul;
+Adafruit_MPU6050 mpur;
+
+
+/******************** INTRODUCTION ENTREES SORTIES ********************/
 
 #define   BUTTON_PIN_SELECT  0    // Bouton du haut : plus
 #define   BUTTON_PIN_START   2    // Bouton du mileu : start
@@ -54,12 +70,14 @@ uint8_t floorType = 0;
 
 /*************************** BOUCLE SETUP ***************************/
 void setup() { 
-
+/*** Boutons***/
   pinMode(BUTTON_PIN_SELECT, INPUT_PULLUP);
   pinMode(BUTTON_PIN_START, INPUT_PULLUP);
+ /*** LEDS ***/
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
   delay(100);
+ /*** Acceleromettre***/
 
 }
 
@@ -69,8 +87,16 @@ void setup() {
 * Objectifs:
 *OK* Import librairie
 * Définir les fonctions principales
+  * Loop, SelectLoop, Startoop
+* Définir les fonctions de lecture des capteurs
+  * Lecture bonton start
+  * Lecture bouton select
+  * Lecture accéléromètre
+  * Lecture capteur de geste
 * Définir la montée et descente des programmes
 * Définir le lancement de programme
+* Fonctions inutiles
+  * Konami Code
 */
 
 
@@ -129,6 +155,20 @@ void startLoop(void){ // lit l'interrupteur start ; lance start show qui execute
   }
   oldStart = newStart;
 }
+/*************************** SENSOR READER ***************************/
+void sensorReader(void){ // Lit les deux accéléromètres 
+  sensors_event_t al, gl, templ;
+  sensors_event_t ar, gr, tempr;
+  mpul.getEvent(&al, &gl, &templ);
+  mpur.getEvent(&ar, &gr, &tempr); 
+}
+
+/*************************** GESTURE READER ***************************/
+void gestureReader(void){ // Lit les deux gestes
+
+ 
+}
+
 
 /*************************** BOUCLE EFFETS DE BASE ***************************/
 void startShow(uint8_t i) {
@@ -142,7 +182,7 @@ void randomLoop(void){ // ramdom programme
 
 /**************************** FONCTION PARAMETRES **********************/
 
-void showStrip() {
+void showStrip() { // fonction interne ADAFRUIT
  #ifdef ADAFRUIT_NEOPIXEL_H 
    // NeoPixel
    strip.show();
@@ -153,7 +193,7 @@ void showStrip() {
  #endif
 }
 
-void setPixel(int Pixel, byte red, byte green, byte blue) {
+void setPixel(int Pixel, byte red, byte green, byte blue) { // fonction interne ADAFRUIT
  #ifdef ADAFRUIT_NEOPIXEL_H 
    // NeoPixel
    strip.setPixelColor(Pixel, strip.Color(red, green, blue));
@@ -166,7 +206,7 @@ void setPixel(int Pixel, byte red, byte green, byte blue) {
  #endif
 }
 
-void setAll(byte red, byte green, byte blue) {
+void setAll(byte red, byte green, byte blue) { // fonction interne ADAFRUIT
   for(int i = 0; i < NUM_LEDS; i++ ) {
     setPixel(i, red, green, blue); 
   }
