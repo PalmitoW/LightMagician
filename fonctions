@@ -1,0 +1,24 @@
+/************************ START ***********************/
+/***************** TEMPERATURE CHANGE *****************/
+// Repérer les variation de température avec un effect lumieux
+void temperaturechange(){
+  sensors_event_t minus_temp=old_temperature-5;
+  sensors_event_t plus_temp=old_temperature+5;
+  if(temperature>plus_temp){
+    colder();
+    old_temperature=minus_temp;
+  }elseif(temperature<plus_temp){
+    hoter();
+    old_temperature=plus_temp;
+  }  
+}
+
+colder(){
+
+}
+
+hoter(){
+  
+}
+/***************** TEMPERATURE CHANGE *****************/
+/************************* END ************************/
