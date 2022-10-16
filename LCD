@@ -1,0 +1,16 @@
+#include "LiquidCrystal.h"
+LiquidCrystal LCD(13, 12, 11, 10, 9, 8);
+ 
+void setup() {
+   LCD.begin(16, 2); // définit le type d'écran lcd 16 x 2
+
+   LCD.setCursor(1, 0);
+   LCD.print("HELLO");
+  
+   LCD.setCursor(8, 1);
+   LCD.print("WORLD");
+}
+ 
+void loop() {
+
+}
