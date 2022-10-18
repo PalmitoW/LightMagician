@@ -13,6 +13,7 @@
 
 /******************** INTRODUCTION LEDS ********************/
 #include <Adafruit_NeoPixel.h>
+#include <sensor.h>
 #ifdef __AVR__
   #include <avr/power.h>
 #endif
