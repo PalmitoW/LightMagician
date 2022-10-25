@@ -13,6 +13,7 @@
 
 #define PIN_NEO_PIXEL  8   // Arduino pin that connects to NeoPixel
 #define NUM_PIXELS     30  // The number of LEDs (pixels) on NeoPixel
+#define DELAY_INTERVAL 500 // Time between led change
 
 Adafruit_NeoPixel NeoPixel(NUM_PIXELS, PIN_NEO_PIXEL, NEO_GRB + NEO_KHZ800);
 
