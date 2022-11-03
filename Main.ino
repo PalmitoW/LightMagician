@@ -1,6 +1,22 @@
-/*********
-  Wizard Lightning
-*********/
+/*******************************/
+/*                              *
+*                               *
+*-------------------------------*
+*                               *
+*   ==  Wizard Lightning  ==    *
+*                               *
+*-------------------------------*
+*                               *
+*                               */                              
+/*******************************/
+
+/*******************************/
+/*                             *
+*                              *
+*   ==      LIBRARIES      ==  *
+*                              *
+*                              */
+/*******************************/
 
 /* I2C */
 #include <Wire.h>
@@ -18,8 +34,20 @@
 #ifdef __AVR__
 #include <avr/power.h>
 #endif
-#define PIN_NEO_PIXEL  8
-#define NUM_PIXELS     241
+
+
+/*******************************/
+/*                             *
+*                              *
+*   ==     DECLARATION     ==  *
+*                              *
+*                              *
+*   ==   SENSOR VARIABLES  ==  *
+*                              *
+*   ==    LED VARIABLES  ==    *
+*                              *
+*                              */ 
+/*******************************/
 
 /*** DECLARATION MULTIPLEXER ***/
 // Select I2C BUS
@@ -50,7 +78,7 @@ uint16_t blue_light3 = 0;
 /*** DECLARATION ACCELERATOR ***/                        /*** USABLE VARIABLE ***/ 
 /*** M2 ***/
 Adafruit_MPU6050 mpu2;
-float temperature = 0;
+float temperature = 20;
 float ax2=0;
 float ay2=0;
 float az2=0;
@@ -86,11 +114,32 @@ float gy5=0;
 float gz5=0;
 
 /*** DECLARATION LED ***/
+#define PIN_NEO_PIXEL  8
+#define NUM_PIXELS     241
 Adafruit_NeoPixel NeoPixel(NUM_PIXELS, PIN_NEO_PIXEL, NEO_GRB + NEO_KHZ800);
 
-/*** DECLARATION MEMORY ***/                        /*** USABLE VARIABLE ***/ 
+/*******************************/
+/*                             *
+*                              *
+*   ==     DECLARATION     ==  *
+*                              *
+*                              *
+*   ==   MEMORY VARIABLES  ==  *
+*                              *
+*                              */ 
+/*******************************/
+/*** TEMPERATURE ***/
+bool HIGH_TEMP=false;
+bool LOW_TEMP=false;
+float oldtemp=20;
 
-
+/*******************************/
+/*                             *
+*                              *
+*   ==        SETUP        ==  *
+*                              *
+*                              */
+/*******************************/
 
 void setup() {
   Serial.begin(115200);
@@ -205,14 +254,34 @@ void setup() {
   /*** INIT LED ***/
   NeoPixel.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
 }
- 
+
+/*******************************/
+/*                             *
+*                              *
+*   ==        LOOP         ==  *
+*                              *
+*                              */
+/*******************************/
+
+
 void loop() {
-  NeoPixel.clear();
-  testled();
-  printlcd(3,"Hello GeekPi",2,"Hello World",3,"Hello",2,"Little Rock");
-  readGesture();
-  readAccelerator();
+  NeoPixel.clear(); // Blackout on ledshow
+  readGesture(); // Read 2 gesture sensor and fulfill global variables
+  readAccelerator(); // Read 4 accelerometer sensor and fulfill global variables
+  enventMaster(); // Treatement of sensor global variable to set some global memory variables
+  select(); // Execute a led fonction if needed
+  printlcd(3,"Hello GeekPi",2,"Hello World",3,"Hello",2,"Little Rock"); // Print on LCD
 }
+
+/*******************************/
+/*                             *
+*                              *
+*   ==   INPUT FONCTIONS   ==  *
+*                              *
+*   ==   OUTPUT FONCTIONS  ==  *
+*                              *
+*                              */
+/*******************************/
 
   /*** PRINT LCD VIA MULTIPLEXER ***/
 void printlcd(int col1,String raw1,int col2,String raw2,int col3,String raw3,int col4,String raw4){
@@ -299,7 +368,29 @@ void readGesture(){
   }
 }
 
+/*******************************/
+/*                             *
+*                              *
+*   ==       SELECT        ==  *
+*                              *
+* Define the fonction to       *
+* exectute                     *
+*                              */
+/*******************************/
 
+void select(){
+	testled();
+}
+
+/*******************************/
+/*                             *
+*                              *
+*   ==      EXEMPLE        ==  *
+*                              *
+*   ==      TEST LED       ==  *
+*                              *
+*                              */
+/*******************************/
 
 void testled(){
 	
@@ -328,3 +419,33 @@ void testled(){
   NeoPixel.show(); // send the updated pixel colors to the NeoPixel hardware.
   delay(2000);     // off time
 }
+
+/*******************************/
+/*                             *
+*                              *
+*   ==       EVENT         ==  *
+*                              *
+*                              */
+/*******************************/
+void enventMaster(){ // group of event fonctions
+	tempevent();
+}
+
+void tempevent(){ //highlight a temperature change
+	float highertemp = oldtemp+5;
+	float lowertemp = oldtemp-5;
+  	if(temperature<lowertemp){
+		LOW_TEMP=true;
+	}
+	if(temperature>highertemp){
+		HIGH_TEMP=true;
+	}
+}
+
+/*******************************/
+/*                             *
+*                              *
+*   ==      TOOL BOX       ==  *
+*                              *
+*                              */
+/*******************************/
